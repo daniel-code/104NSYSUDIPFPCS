@@ -1,25 +1,22 @@
-﻿using DIPHua3;
-using System;
-using System.Drawing.Imaging;
+﻿using System;
+using DIPHua3;
 
-namespace Deblur {
+namespace Sharpenfilter {
     class Program {
         static void Main( string[] args ) {
             try {
-                if( args.Length >= 4 ) {
+                if( args.Length >= 3 ) {
                     string RPath = args[ 0 ];
                     string WPath = args[ 1 ];
                     string WExt = args[ 2 ];
-                    double Length = Convert.ToDouble( args[ 3 ] );
-                    double Lambda = Convert.ToDouble( args[ 4 ] );
                     BGRImg Source = BGRImg.From( RPath );
-                    Source.SimpleMotionDeblur( Length, Lambda ).ToImage().Save( WPath, ImgF.ChooseImgFormat( WExt ) );
+                    Source.Sharpen();
+                    Source.ToImage().Save( WPath, ImgF.ChooseImgFormat( WExt ) );
                     Environment.Exit( 0 );
                 } else {
                     Environment.Exit( 1 );
                 }
-            } catch( Exception ex ) {
-                Console.WriteLine( ex.ToString() );
+            } catch {
                 Environment.Exit( 2 );
             }
         }

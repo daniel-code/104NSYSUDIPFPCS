@@ -8,6 +8,224 @@ namespace DIPHua3 {
     public enum BGRModel {
         B = 1, G = 2, R = 4
     }
+    public unsafe class ImgF {
+        static public Complex[] SpatialFilter( Complex[] source, int width, int height, double[,] filter ) {
+            int fheight = filter.GetLength( 0 ), fwidth = filter.GetLength( 1 );
+            if( fheight % 2 == 0 || fheight != fwidth ) {
+                throw new Exception( "Filter 必須為 [n*n]，n 為奇數。" );
+            }
+            int flen = fheight;
+            int flend2 = flen / 2;
+            int x, y, a, b, m, n;
+            double t;
+            Complex[] result = new Complex[ source.Length ];
+            for( y = 0 ; y < height ; ++y ) {
+                for( x = 0 ; x < width ; ++x ) {
+                    t = 0;
+                    for( a = y - flend2, m = 0 ; a <= y + flend2 ; ++a, ++m ) {
+                        if( a >= 0 && a < height ) {
+                            for( b = x - flend2, n = 0 ; b <= x + flend2 ; ++b, ++n ) {
+                                if( b >= 0 && b < width ) {
+                                    t += filter[ m, n ] * source[ a * width + b ].Modulus;
+                                }
+                            }
+                        }
+                    }
+                    result[ y * width + x ] = Complex.FromRealImaginary( t, 0 );
+                }
+            }
+            return result;
+        }
+        static public ComplexFourierTransformation CFTMatlab = new ComplexFourierTransformation( TransformationConvention.Matlab );
+        static public ComplexFourierTransformation CFT = new ComplexFourierTransformation( TransformationConvention.Default );
+        static public bool IsPowerOf2( int x ) {
+            return ( x & ( x - 1 ) ) == 0;
+        }
+        static public int Pow2( int exponent ) {
+            if( exponent >= 0 && exponent < 31 ) {
+                return 1 << exponent;
+            }
+            return 0;
+        }
+        static public int Log2( int x ) {
+            if( x <= 65536 ) {
+                if( x <= 256 ) {
+                    if( x <= 16 ) {
+                        if( x <= 4 ) {
+                            if( x <= 2 ) {
+                                if( x <= 1 ) {
+                                    return 0;
+                                }
+                                return 1;
+                            }
+                            return 2;
+                        }
+                        if( x <= 8 )
+                            return 3;
+                        return 4;
+                    }
+                    if( x <= 64 ) {
+                        if( x <= 32 )
+                            return 5;
+                        return 6;
+                    }
+                    if( x <= 128 )
+                        return 7;
+                    return 8;
+                }
+                if( x <= 4096 ) {
+                    if( x <= 1024 ) {
+                        if( x <= 512 )
+                            return 9;
+                        return 10;
+                    }
+                    if( x <= 2048 )
+                        return 11;
+                    return 12;
+                }
+                if( x <= 16384 ) {
+                    if( x <= 8192 )
+                        return 13;
+                    return 14;
+                }
+                if( x <= 32768 )
+                    return 15;
+                return 16;
+            }
+            if( x <= 16777216 ) {
+                if( x <= 1048576 ) {
+                    if( x <= 262144 ) {
+                        if( x <= 131072 )
+                            return 17;
+                        return 18;
+                    }
+                    if( x <= 524288 )
+                        return 19;
+                    return 20;
+                }
+                if( x <= 4194304 ) {
+                    if( x <= 2097152 )
+                        return 21;
+                    return 22;
+                }
+                if( x <= 8388608 )
+                    return 23;
+                return 24;
+            }
+            if( x <= 268435456 ) {
+                if( x <= 67108864 ) {
+                    if( x <= 33554432 )
+                        return 25;
+                    return 26;
+                }
+                if( x <= 134217728 )
+                    return 27;
+                return 28;
+            }
+            if( x <= 1073741824 ) {
+                if( x <= 536870912 )
+                    return 29;
+                return 30;
+            }
+            return 31;
+        }
+        static public byte D2B( double a ) {
+            if( a > 255 ) {
+                return 255;
+            } else if( a < 0 ) {
+                return 0;
+            } else {
+                return (byte) a;
+            }
+        }
+        static public ImageFormat ChooseImgFormat( string stringformat ) {
+            switch( stringformat.ToUpper() ) {
+                case "PNG":
+                    return ImageFormat.Png;
+                case "JPG":
+                case "JPEG":
+                    return ImageFormat.Jpeg;
+                case "GIF":
+                    return ImageFormat.Gif;
+                case "BMP":
+                    return ImageFormat.Bmp;
+                case "EMF":
+                    return ImageFormat.Emf;
+                case "ICO":
+                case "ICON":
+                    return ImageFormat.Icon;
+                case "WMF":
+                    return ImageFormat.Wmf;
+                default:
+                    return ImageFormat.Tiff;
+            }
+        }
+        static public void AddIn( Complex[] result, Complex[] source ) {
+            int l = result.Length;
+            if( l != source.Length ) {
+                throw new Exception( "長度不同" );
+            }
+            int i;
+            for( i = 0 ; i < l ; ++i ) {
+                result[ i ] += source[ i ];
+            }
+        }
+        static public double Max( Complex[] source ) {
+            int l = source.Length;
+            int i;
+            double max = double.MinValue;
+            for( i = 0 ; i < l ; ++i ) {
+                max = max < source[ i ].Modulus ? source[ i ].Modulus : max;
+            }
+            return max;
+        }
+        static public double Min( Complex[] source ) {
+            int l = source.Length;
+            int i;
+            double min = double.MaxValue;
+            for( i = 0 ; i < l ; ++i ) {
+                min = min > source[ i ].Modulus ? source[ i ].Modulus : min;
+            }
+            return min;
+        }
+        static public double[] MinMax( Complex[] source ) {
+            int l = source.Length;
+            int i;
+            double max = double.MinValue;
+            double min = double.MaxValue;
+            double t;
+            for( i = 0 ; i < l ; ++i ) {
+                t = source[ i ].Modulus;
+                min = min > t ? t : min;
+                max = max < t ? t : max;
+            }
+            return new double[] { max, min };
+        }
+        static public void Between0And255( Complex[] source ) {
+            double[] fmaxmin = MinMax( source );
+            fmaxmin[ 0 ] -= fmaxmin[ 1 ];
+            fmaxmin[ 0 ] = 255 / fmaxmin[ 0 ];
+            int l = source.Length;
+            int i;
+            for( i = 0 ; i < l ; ++i ) {
+                source[ i ] -= fmaxmin[ 1 ];
+                source[ i ] *= fmaxmin[ 0 ];
+            }
+        }
+        static public void Sharpen( Complex[] source, int width, int height ) {
+            double[,] filter = new double[,] {
+                { -1, -1, -1},
+                { -1, 8, -1},
+                { -1, -1, -1}
+            };
+            source = SpatialFilter( source, width, height, filter );
+            /*
+            Between0And255( ftmp );
+            AddIn( source, ftmp );
+            Between0And255( source );
+            */
+        }
+    }
     public unsafe class GrayImg {
         public GrayImg( int width, int height ) {
             _Width = width;
@@ -72,8 +290,8 @@ namespace DIPHua3 {
             return rext;
         }
         public GrayImg Extend() {
-            int ewidth = (int) Math.Pow( 2, Funct.Log2( _Width ) ),
-                eheight = (int) Math.Pow( 2, Funct.Log2( _Height ) );
+            int ewidth = (int) Math.Pow( 2, ImgF.Log2( _Width ) ),
+                eheight = (int) Math.Pow( 2, ImgF.Log2( _Height ) );
             GrayImg result = new GrayImg( ewidth, eheight );
             int startx = ( ewidth - _Width ) / 2,
                 starty = ( eheight - _Height ) / 2;
@@ -117,10 +335,10 @@ namespace DIPHua3 {
             return result;
         }
         public void FFT2() {
-            Funct.CFTMatlab.TransformForward( _Gray, new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformForward( _Gray, new int[] { _Height, _Width } );
         }
         public void IFFT2() {
-            Funct.CFTMatlab.TransformBackward( _Gray, new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformBackward( _Gray, new int[] { _Height, _Width } );
         }
         public void BFFTShift() {
             int x, y, t;
@@ -163,7 +381,7 @@ namespace DIPHua3 {
         }
         public Bitmap ToImage( bool Freq = false ) {
             int scale = _Width * _Height;
-            int i, t;
+            int i;
             double max = double.MinValue;
             double min = double.MaxValue;
             double[] tmpdata = new double[ scale ];
@@ -180,7 +398,7 @@ namespace DIPHua3 {
             BitmapData resultdata = result.LockBits( new Rectangle( 0, 0, result.Width, result.Height ), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb );
             byte* resultpointer = (byte*) resultdata.Scan0.ToPointer();
             for( i = 0 ; i < scale ; ++i ) {
-                resultpointer[ 0 ] = resultpointer[ 1 ] = resultpointer[ 2 ] = Funct.D2B( ( tmpdata[ i ] - min ) * s );
+                resultpointer[ 0 ] = resultpointer[ 1 ] = resultpointer[ 2 ] = ImgF.D2B( ( tmpdata[ i ] - min ) * s );
                 resultpointer[ 3 ] = 255;
                 resultpointer+=4;
             }
@@ -284,8 +502,8 @@ namespace DIPHua3 {
             return rext;
         }
         public BGRImg Extend() {
-            int ewidth = (int) Math.Pow( 2, Funct.Log2( _Width ) ), 
-                eheight = (int) Math.Pow( 2, Funct.Log2( _Height ) );
+            int ewidth = (int) Math.Pow( 2, ImgF.Log2( _Width ) ), 
+                eheight = (int) Math.Pow( 2, ImgF.Log2( _Height ) );
             BGRImg result = new BGRImg( ewidth, eheight );
             int startx = ( ewidth - _Width ) / 2, 
                 starty = ( eheight - _Height ) / 2;
@@ -357,7 +575,7 @@ namespace DIPHua3 {
             byte* resultpointer = (byte*) resultdata.Scan0.ToPointer();
             for( i = 0 ; i < scale ; ++i ) {
                 for( t = 0 ; t < 3 ; ++t ) {
-                    resultpointer[ 0 ] = Funct.D2B( ( tmpdata[ t, i ] - min ) * s );
+                    resultpointer[ 0 ] = ImgF.D2B( ( tmpdata[ t, i ] - min ) * s );
                     ++resultpointer;
                 }
                 resultpointer[ 0 ] = 255;
@@ -392,15 +610,47 @@ namespace DIPHua3 {
         static public BGRImg From( string path, bool grayscale = false ) {
             return From( new Bitmap( path ), grayscale );
         }
+        public void GLFilter() {
+            GaussianFilter();
+            LaplaceFilter();
+        }
+        public void GaussianFilter() {
+            SpatialFilter( new double[,] {
+                { -2, -4, -4, -4, -2},
+                { -4, 0, 8, 0, -4},
+                { -4, 8, 2, 8, -4},
+                { -4, 0, 8, 0, -4},
+                { -2, -4, -4, -4, -2},
+            } );
+        }
+        public void LaplaceFilter() {
+            SpatialFilter( new double[,] {
+                { 0, 0, -1, 0, 0},
+                { 0, -1, -2, -1, 0},
+                { -1, -2, 16, -2, -1},
+                { 0, -1, -2, -1, 0},
+                { 0, 0, -1, 0, 0},
+            } );
+        }
+        private void SpatialFilter( double[,] filter ) {
+            _BGR[ 0 ] = ImgF.SpatialFilter( _BGR[ 0 ], _Width, _Height, filter );
+            _BGR[ 1 ] = ImgF.SpatialFilter( _BGR[ 1 ], _Width, _Height, filter );
+            _BGR[ 2 ] = ImgF.SpatialFilter( _BGR[ 2 ], _Width, _Height, filter );
+        }
+        public void Sharpen() {
+            ImgF.Sharpen( _BGR[ 0 ], _Width, _Height );
+            ImgF.Sharpen( _BGR[ 1 ], _Width, _Height );
+            ImgF.Sharpen( _BGR[ 2 ], _Width, _Height );
+        }
         public void FFT2() {
-            Funct.CFTMatlab.TransformForward( _BGR[ 0 ], new int[] { _Height, _Width } );
-            Funct.CFTMatlab.TransformForward( _BGR[ 1 ], new int[] { _Height, _Width } );
-            Funct.CFTMatlab.TransformForward( _BGR[ 2 ], new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformForward( _BGR[ 0 ], new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformForward( _BGR[ 1 ], new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformForward( _BGR[ 2 ], new int[] { _Height, _Width } );
         }
         public void IFFT2() {
-            Funct.CFTMatlab.TransformBackward( _BGR[ 0 ], new int[] { _Height, _Width } );
-            Funct.CFTMatlab.TransformBackward( _BGR[ 1 ], new int[] { _Height, _Width } );
-            Funct.CFTMatlab.TransformBackward( _BGR[ 2 ], new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformBackward( _BGR[ 0 ], new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformBackward( _BGR[ 1 ], new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformBackward( _BGR[ 2 ], new int[] { _Height, _Width } );
         }
         public void BFFTShift() {
             int x, y, t;
@@ -506,11 +756,11 @@ namespace DIPHua3 {
             }
         }
         public void FFT2() {
-            Funct.CFTMatlab.TransformForward( _Kernel, new int[] { _Height, _Width } );
+            ImgF.CFTMatlab.TransformForward( _Kernel, new int[] { _Height, _Width } );
         }
         public Bitmap ToImage( bool Freq = false ) {
             int scale = _Width * _Height;
-            int i, t;
+            int i;
             double max = double.MinValue;
             double min = double.MaxValue;
             double[] tmpdata = new double[ scale ];
@@ -527,7 +777,7 @@ namespace DIPHua3 {
             BitmapData resultdata = result.LockBits( new Rectangle( 0, 0, result.Width, result.Height ), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb );
             byte* resultpointer = (byte*) resultdata.Scan0.ToPointer();
             for( i = 0 ; i < scale ; ++i ) {
-                resultpointer[ 0 ] = resultpointer[ 1 ] = resultpointer[ 2 ] = Funct.D2B( ( tmpdata[ i ] - min ) * s );
+                resultpointer[ 0 ] = resultpointer[ 1 ] = resultpointer[ 2 ] = ImgF.D2B( ( tmpdata[ i ] - min ) * s );
                 resultpointer[ 3 ] = 255;
                 resultpointer += 4;
             }

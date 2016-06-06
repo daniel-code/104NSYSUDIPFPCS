@@ -13,7 +13,7 @@ namespace Magnitudedisplay {
                     BGRImg Result = Source.Extend();
                     Result.BFFTShift();
                     Result.FFT2();
-                    Result.ToImage( true ).Save( WPath, Funct.ChooseImgFormat( WExt ) );
+                    Result.ToImage( true ).Save( WPath, ImgF.ChooseImgFormat( WExt ) );
                     Environment.Exit( 0 );
                 } else {
                     Environment.Exit( 1 );

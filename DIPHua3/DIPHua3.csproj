@@ -87,7 +87,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Funct.cs" />
     <Compile Include="Img.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

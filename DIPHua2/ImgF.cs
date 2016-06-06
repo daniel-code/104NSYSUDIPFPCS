@@ -5,7 +5,6 @@ using System.Drawing.Imaging;
 using AMComplex = AForge.Math.Complex;
 using AMFT = AForge.Math.FourierTransform;
 using EDSPComplex = Exocortex.DSP.Complex;
-using EDSPComplexF = Exocortex.DSP.ComplexF;
 using EDSPFT = Exocortex.DSP.Fourier;
 using EDSPFD = Exocortex.DSP.FourierDirection;
 

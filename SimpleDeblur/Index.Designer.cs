@@ -112,7 +112,7 @@
             // SS_Spring
             // 
             this.SS_Spring.Name = "SS_Spring";
-            this.SS_Spring.Size = new System.Drawing.Size(136, 17);
+            this.SS_Spring.Size = new System.Drawing.Size(167, 17);
             this.SS_Spring.Spring = true;
             // 
             // SS_PB
@@ -196,7 +196,7 @@
             this.TrB_Lambda.Maximum = 100;
             this.TrB_Lambda.Minimum = 1;
             this.TrB_Lambda.Name = "TrB_Lambda";
-            this.TrB_Lambda.Size = new System.Drawing.Size(309, 48);
+            this.TrB_Lambda.Size = new System.Drawing.Size(309, 45);
             this.TrB_Lambda.TabIndex = 1;
             this.TrB_Lambda.Value = 10;
             this.TrB_Lambda.Scroll += new System.EventHandler(this.TrB_Lambda_Scroll);
@@ -240,7 +240,7 @@
             this.TrB_Length.Maximum = 101;
             this.TrB_Length.Minimum = 1;
             this.TrB_Length.Name = "TrB_Length";
-            this.TrB_Length.Size = new System.Drawing.Size(309, 48);
+            this.TrB_Length.Size = new System.Drawing.Size(309, 45);
             this.TrB_Length.SmallChange = 2;
             this.TrB_Length.TabIndex = 0;
             this.TrB_Length.Value = 53;
@@ -249,10 +249,11 @@
             // PB_Kernel
             // 
             this.PB_Kernel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PB_Kernel.Location = new System.Drawing.Point(387, 3);
+            this.PB_Kernel.Location = new System.Drawing.Point(384, 0);
+            this.PB_Kernel.Margin = new System.Windows.Forms.Padding(0);
             this.PB_Kernel.Name = "PB_Kernel";
             this.TLP_Setting.SetRowSpan(this.PB_Kernel, 2);
-            this.PB_Kernel.Size = new System.Drawing.Size(94, 94);
+            this.PB_Kernel.Size = new System.Drawing.Size(100, 100);
             this.PB_Kernel.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.PB_Kernel.TabIndex = 2;
             this.PB_Kernel.TabStop = false;
@@ -281,7 +282,7 @@
             // 
             // MS
             // 
-            this.MS.BackColor = System.Drawing.Color.AliceBlue;
+            this.MS.BackColor = System.Drawing.Color.LightSkyBlue;
             this.MS.Dock = System.Windows.Forms.DockStyle.None;
             this.MS.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MS_File});
@@ -302,17 +303,21 @@
             // 
             // MS_File_Open
             // 
+            this.MS_File_Open.BackColor = System.Drawing.Color.LightSkyBlue;
             this.MS_File_Open.Name = "MS_File_Open";
+            this.MS_File_Open.Padding = new System.Windows.Forms.Padding(0);
             this.MS_File_Open.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.MS_File_Open.Size = new System.Drawing.Size(167, 22);
+            this.MS_File_Open.Size = new System.Drawing.Size(167, 20);
             this.MS_File_Open.Text = "開啟圖片";
             this.MS_File_Open.Click += new System.EventHandler(this.MS_File_Open_Click);
             // 
             // MS_File_Save
             // 
+            this.MS_File_Save.BackColor = System.Drawing.Color.LightSkyBlue;
             this.MS_File_Save.Name = "MS_File_Save";
+            this.MS_File_Save.Padding = new System.Windows.Forms.Padding(0);
             this.MS_File_Save.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S)));
-            this.MS_File_Save.Size = new System.Drawing.Size(167, 22);
+            this.MS_File_Save.Size = new System.Drawing.Size(167, 20);
             this.MS_File_Save.Text = "匯出圖片";
             this.MS_File_Save.Click += new System.EventHandler(this.MS_File_Save_Click);
             // 
