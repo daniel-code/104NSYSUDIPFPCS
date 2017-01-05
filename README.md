@@ -17,4 +17,4 @@ It needs MathNet to provide fast fourier transform.
 https://github.com/mathnet/mathnet-iridium
 
 # Example
-Website is closed.
+Website has closed.
